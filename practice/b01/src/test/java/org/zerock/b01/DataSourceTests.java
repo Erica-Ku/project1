@@ -14,15 +14,18 @@ import java.sql.SQLException;
 @SpringBootTest
 @Log4j2
 public class DataSourceTests {
+
     @Autowired
     private DataSource dataSource;
 
     @Test
     public void testConnection() throws SQLException {
+
         @Cleanup
         Connection con = dataSource.getConnection();
 
         log.info(con);
+
         Assertions.assertNotNull(con);
     }
 }

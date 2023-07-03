@@ -9,16 +9,20 @@ import org.zerock.b01.dto.ReplyDTO;
 @SpringBootTest
 @Log4j2
 public class ReplyServiceTests {
+
     @Autowired
     private ReplyService replyService;
 
     @Test
     public void testRegister() {
+
         ReplyDTO replyDTO = ReplyDTO.builder()
                 .replyText("ReplyDTO Text")
                 .replyer("replyer")
                 .bno(100L)
                 .build();
+
         log.info(replyService.register(replyDTO));
     }
+
 }

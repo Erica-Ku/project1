@@ -1,5 +1,6 @@
 package org.zerock.b01.domain;
 
+
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -14,10 +15,13 @@ import java.time.LocalDateTime;
 @EntityListeners(value = { AuditingEntityListener.class })
 @Getter
 abstract class BaseEntity {
+
     @CreatedDate
     @Column(name = "regdate", updatable = false)
     private LocalDateTime regDate;
+
     @LastModifiedDate
-    @Column(name = "moddate")
+    @Column(name ="moddate" )
     private LocalDateTime modDate;
+
 }
