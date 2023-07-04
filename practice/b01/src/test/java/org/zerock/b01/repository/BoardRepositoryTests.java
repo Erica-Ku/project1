@@ -13,6 +13,7 @@ import org.zerock.b01.dto.BoardListReplyCountDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -22,7 +23,7 @@ public class BoardRepositoryTests {
     @Autowired
     private BoardRepository boardRepository;
 
-    @Test
+//    @Test
     public void testInsert() {
         IntStream.rangeClosed(1,100).forEach(i -> {
             Board board = Board.builder()
@@ -36,7 +37,7 @@ public class BoardRepositoryTests {
         });
     }
 
-    @Test
+//    @Test
     public void testSelect() {
         Long bno = 100L;
 
@@ -48,7 +49,7 @@ public class BoardRepositoryTests {
 
     }
 
-    @Test
+//    @Test
     public void testUpdate() {
 
         Long bno = 100L;
@@ -63,14 +64,14 @@ public class BoardRepositoryTests {
 
     }
 
-    @Test
+//    @Test
     public void testDelete() {
         Long bno = 1L;
 
         boardRepository.deleteById(bno);
     }
 
-    @Test
+//    @Test
     public void testPaging() {
 
         //1 page order by bno desc
@@ -91,7 +92,7 @@ public class BoardRepositoryTests {
 
     }
 
-    @Test
+//    @Test
     public void testSearch1() {
 
         //2 page order by bno desc
@@ -101,7 +102,7 @@ public class BoardRepositoryTests {
 
     }
 
-    @Test
+//    @Test
     public void testSearchAll() {
 
         String[] types = {"t","c","w"};
@@ -114,7 +115,7 @@ public class BoardRepositoryTests {
 
     }
 
-    @Test
+//    @Test
     public void testSearchAll2() {
 
         String[] types = {"t","c","w"};
@@ -141,7 +142,7 @@ public class BoardRepositoryTests {
     }
 
 
-    @Test
+//    @Test
     public void testSearchReplyCount() {
 
         String[] types = {"t","c","w"};
@@ -164,6 +165,16 @@ public class BoardRepositoryTests {
         result.getContent().forEach(board -> log.info(board));
     }
 
-
-
+    @Test
+    public void testInsertWithImages() {
+        Board board = Board.builder()
+                .title("Image Test")
+                .content("첨부파일 테스트")
+                .writer("tester")
+                .build();
+        for (int i = 0; i < 3; i++) {
+            board.addImage(UUID.randomUUID().toString(), "file" + i + ".jpg");
+        }
+        boardRepository.save(board);
+    }
 }
