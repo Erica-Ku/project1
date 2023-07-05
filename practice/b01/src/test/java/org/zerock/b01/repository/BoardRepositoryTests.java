@@ -8,7 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Commit;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.b01.domain.Board;
+import org.zerock.b01.domain.BoardImage;
 import org.zerock.b01.dto.BoardListReplyCountDTO;
 
 import java.util.List;
@@ -165,7 +168,7 @@ public class BoardRepositoryTests {
         result.getContent().forEach(board -> log.info(board));
     }
 
-    @Test
+//    @Test
     public void testInsertWithImages() {
         Board board = Board.builder()
                 .title("Image Test")
@@ -174,6 +177,30 @@ public class BoardRepositoryTests {
                 .build();
         for (int i = 0; i < 3; i++) {
             board.addImage(UUID.randomUUID().toString(), "file" + i + ".jpg");
+        }
+        boardRepository.save(board);
+    }
+
+//    @Test
+    public void testReadWithImages() {
+        Optional<Board> result = boardRepository.findByIdWithImages(1L);
+        Board board = result.orElseThrow();
+        log.info(board);
+        log.info("---------------------");
+        for(BoardImage boardImage : board.getImageSet()) {
+            log.info(boardImage);
+        }
+    }
+
+    @Transactional
+    @Commit
+    @Test
+    public void testModifyImages() {
+        Optional<Board> result = boardRepository.findByIdWithImages(1L);
+        Board board = result.orElseThrow();
+        board.clearImages();
+        for(int i = 0; i < 2; i++) {
+            board.addImage(UUID.randomUUID().toString(), "updatefile" + i + ".jpg");
         }
         boardRepository.save(board);
     }
