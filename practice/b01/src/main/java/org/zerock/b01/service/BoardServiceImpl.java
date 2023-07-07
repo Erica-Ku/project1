@@ -1,5 +1,6 @@
 package org.zerock.b01.service;
 
+import com.querydsl.jpa.JPQLQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -7,10 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.zerock.b01.domain.Board;
-import org.zerock.b01.dto.BoardDTO;
-import org.zerock.b01.dto.BoardListReplyCountDTO;
-import org.zerock.b01.dto.PageRequestDTO;
-import org.zerock.b01.dto.PageResponseDTO;
+import org.zerock.b01.domain.QBoard;
+import org.zerock.b01.domain.QReply;
+import org.zerock.b01.dto.*;
 import org.zerock.b01.repository.BoardRepository;
 
 import javax.transaction.Transactional;
@@ -32,7 +32,7 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public Long register(BoardDTO boardDTO) {
 
-        Board board = modelMapper.map(boardDTO, Board.class);
+        Board board = dtoToEntity(boardDTO);
 
         Long bno = boardRepository.save(board).getBno();
 
@@ -42,11 +42,11 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public BoardDTO readOne(Long bno) {
 
-        Optional<Board> result = boardRepository.findById(bno);
+        Optional<Board> result = boardRepository.findByIdWithImages(bno);
 
         Board board = result.orElseThrow();
 
-        BoardDTO boardDTO = modelMapper.map(board, BoardDTO.class);
+        BoardDTO boardDTO = entityToDTO(board);
 
         return boardDTO;
     }
@@ -60,8 +60,16 @@ public class BoardServiceImpl implements BoardService{
 
         board.change(boardDTO.getTitle(), boardDTO.getContent());
 
-        boardRepository.save(board);
+        board.clearImages();
 
+        if(boardDTO.getFileNames() != null) {
+            for(String fileName : boardDTO.getFileNames()) {
+                String[] arr = fileName.split("_");
+                board.addImage(arr[0], arr[1]);
+            }
+        }
+
+        boardRepository.save(board);
     }
 
     @Override
@@ -120,5 +128,16 @@ public class BoardServiceImpl implements BoardService{
                 .build();
     }
 
-
+    @Override
+    public PageResponseDTO<BoardListAllDTO> listWithAll(PageRequestDTO pageRequestDTO) {
+        String[] types = pageRequestDTO.getTypes();
+        String keyword = pageRequestDTO.getKeyword();
+        Pageable pageable = pageRequestDTO.getPageable("bno");
+        Page<BoardListAllDTO> result = boardRepository.searchWithAll(types, keyword, pageable);
+        return PageResponseDTO.<BoardListAllDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(result.getContent())
+                .total((int)result.getTotalElements())
+                .build();
+    }
 }
