@@ -27,12 +27,22 @@ public class Board extends BaseEntity{
     @Column(length = 50, nullable = false)
     private String writer;
 
-    @OneToMany(mappedBy = "board", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, orphanRemoval = true)
+    public void change(String title, String content){
+        this.title = title;
+        this.content = content;
+    }
+
+
+    @OneToMany(mappedBy = "board",
+            cascade = {CascadeType.ALL},
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
     @Builder.Default
     @BatchSize(size = 20)
     private Set<BoardImage> imageSet = new HashSet<>();
 
-    public void addImage(String uuid, String fileName) {
+    public void addImage(String uuid, String fileName){
+
         BoardImage boardImage = BoardImage.builder()
                 .uuid(uuid)
                 .fileName(fileName)
@@ -43,14 +53,10 @@ public class Board extends BaseEntity{
     }
 
     public void clearImages() {
+
         imageSet.forEach(boardImage -> boardImage.changeBoard(null));
+
         this.imageSet.clear();
     }
-
-    public void change(String title, String content){
-        this.title = title;
-        this.content = content;
-    }
-
 
 }

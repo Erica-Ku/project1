@@ -17,7 +17,7 @@ public class BoardServiceTests {
     @Autowired
     private BoardService boardService;
 
-//    @Test
+    @Test
     public void testRegister() {
 
         log.info(boardService.getClass().getName());
@@ -34,22 +34,20 @@ public class BoardServiceTests {
     }
 
 //    @Test
-    public void testModify() {
+//    public void testModify() {
+//
+//        //변경에 필요한 데이터만
+//        BoardDTO boardDTO = BoardDTO.builder()
+//                .bno(101L)
+//                .title("Updated....101")
+//                .content("Updated content 101...")
+//                .build();
+//
+//        boardService.modify(boardDTO);
+//
+//    }
 
-        //변경에 필요한 데이터만
-        BoardDTO boardDTO = BoardDTO.builder()
-                .bno(101L)
-                .title("Updated....101")
-                .content("Updated content 101...")
-                .build();
-
-        boardDTO.setFileNames(Arrays.asList(UUID.randomUUID() + "_zzz.jpg"));
-
-        boardService.modify(boardDTO);
-
-    }
-
-//    @Test
+    @Test
     public void testList() {
 
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
@@ -65,56 +63,94 @@ public class BoardServiceTests {
 
     }
 
-//    @Test
+
+    @Test
     public void testRegisterWithImages() {
+
         log.info(boardService.getClass().getName());
+
         BoardDTO boardDTO = BoardDTO.builder()
-                .title("File.....Sample Title.....")
-                .content("Sample Content.....")
+                .title("File...Sample Title...")
+                .content("Sample Content...")
                 .writer("user00")
                 .build();
+
         boardDTO.setFileNames(
                 Arrays.asList(
-                        UUID.randomUUID() + "_aaa.jpg",
-                        UUID.randomUUID() + "_bbb.jpg",
-                        UUID.randomUUID() + "_bbb.jpg"
+                        UUID.randomUUID()+"_aaa.jpg",
+                        UUID.randomUUID()+"_bbb.jpg",
+                        UUID.randomUUID()+"_bbb.jpg"
                 ));
+
         Long bno = boardService.register(boardDTO);
+
         log.info("bno: " + bno);
     }
 
-//    @Test
+    @Test
     public void testReadAll() {
+
         Long bno = 101L;
+
         BoardDTO boardDTO = boardService.readOne(bno);
+
         log.info(boardDTO);
+
         for (String fileName : boardDTO.getFileNames()) {
             log.info(fileName);
-        }
+        }//end for
+
     }
 
-//    @Test
+    @Test
+    public void testModify() {
+
+        //변경에 필요한 데이터
+        BoardDTO boardDTO = BoardDTO.builder()
+                .bno(101L)
+                .title("Updated....101")
+                .content("Updated content 101...")
+                .build();
+
+        //첨부파일을 하나 추가
+        boardDTO.setFileNames(Arrays.asList(UUID.randomUUID()+"_zzz.jpg"));
+
+        boardService.modify(boardDTO);
+
+    }
+
+    @Test
     public void testRemoveAll() {
+
         Long bno = 1L;
+
         boardService.remove(bno);
+
     }
 
     @Test
     public void testListWithAll() {
+
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .page(1)
                 .size(10)
                 .build();
-        PageResponseDTO<BoardListAllDTO> responseDTO = boardService.listWithAll(pageRequestDTO);
+
+        PageResponseDTO<BoardListAllDTO> responseDTO =
+                boardService.listWithAll(pageRequestDTO);
+
         List<BoardListAllDTO> dtoList = responseDTO.getDtoList();
+
         dtoList.forEach(boardListAllDTO -> {
-            log.info(boardListAllDTO.getBno() + ":" + boardListAllDTO.getTitle());
+            log.info(boardListAllDTO.getBno()+":"+boardListAllDTO.getTitle());
+
             if(boardListAllDTO.getBoardImages() != null) {
-                for(BoardImageDTO boardImage : boardListAllDTO.getBoardImages()) {
+                for (BoardImageDTO boardImage : boardListAllDTO.getBoardImages()) {
                     log.info(boardImage);
                 }
             }
-            log.info("--------------------");
+
+            log.info("-------------------------------");
         });
     }
 }
