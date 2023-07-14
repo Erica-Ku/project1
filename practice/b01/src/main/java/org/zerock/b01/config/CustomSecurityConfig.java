@@ -19,19 +19,15 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
         log.info("-----configure-----");
-
         http.formLogin();
-
-        return http.build();
     }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         log.info("-----web configure-----");
-        return (web) -> web.ignoring().requestMatchers(PathRequest.
-                                        toStaticResources().atCommonLocations());
+        return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 }
