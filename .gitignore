@@ -280,4 +280,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# 사용자
+
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,eclipse,intellij,java
