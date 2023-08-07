@@ -281,5 +281,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # 사용자
+application.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,eclipse,intellij,java
